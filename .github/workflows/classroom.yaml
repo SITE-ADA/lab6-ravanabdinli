@@ -1,0 +1,46 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Make Gradle executable
+        run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test
+
+#      - name: Upload test HTML report
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-report
+#          path: build/reports/tests/test
+#
+#      - name: Upload JUnit XML results
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: junit-results
+#          path: build/test-results/test
+
+#      - name: Publish Test Results
+#        uses: dorny/test-reporter@v1
+#        with:
+#          name: Unit Tests
+#          path: build/test-results/test
+#          reporter: junit
+#          fail-on-error: true
