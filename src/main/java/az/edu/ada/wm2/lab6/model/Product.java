@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
 
 
     @Entity
@@ -17,7 +19,16 @@ import java.util.UUID;
     private String productName;
     private BigDecimal price;
     private LocalDate expirationDate;
-    public Product() {
+
+        @ManyToMany
+        @JoinTable(
+                name = "product_category",
+                joinColumns = @JoinColumn(name = "product_id"),
+                inverseJoinColumns = @JoinColumn(name = "category_id")
+        )
+        private Set<Category> categories = new HashSet<>();
+
+        public Product() {
     }
 
 
@@ -76,4 +87,12 @@ import java.util.UUID;
                 ", expirationDate=" + expirationDate +
                 '}';
     }
+
+        public Set<Category> getCategories() {
+            return categories;
+        }
+
+        public void setCategories(Set<Category> categories) {
+            this.categories = categories;
+        }
 }
