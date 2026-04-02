@@ -9,6 +9,7 @@ import az.edu.ada.wm2.lab6.model.mapper.CategoryMapper;
 import az.edu.ada.wm2.lab6.model.mapper.ProductMapper;
 import az.edu.ada.wm2.lab6.repository.CategoryRepository;
 import az.edu.ada.wm2.lab6.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
+    @Autowired
     public CategoryServiceImpl(CategoryRepository categoryRepository,
                                ProductRepository productRepository,
                                ProductMapper productMapper) {
@@ -31,8 +33,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDto create(CategoryRequestDto dto) {
-        Category saved = categoryRepository.save(CategoryMapper.toEntity(dto));
-        return CategoryMapper.toResponseDto(saved);
+        Category category = CategoryMapper.toEntity(dto);
+        return CategoryMapper.toResponseDto(categoryRepository.save(category));
     }
 
     @Override
@@ -46,12 +48,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDto addProduct(UUID categoryId, UUID productId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found: " + categoryId));
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
 
-        // Since Product is the owner of the relationship, we add the category to the product
         product.getCategories().add(category);
         productRepository.save(product);
 
@@ -61,11 +62,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<ProductResponseDto> getProducts(UUID categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found: " + categoryId));
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
 
-        return productRepository.findAll()
+        return category.getProducts()
                 .stream()
-                .filter(p -> p.getCategories().contains(category))
                 .map(productMapper::toResponseDto)
                 .toList();
     }

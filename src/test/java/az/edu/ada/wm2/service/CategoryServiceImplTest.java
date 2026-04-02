@@ -9,6 +9,7 @@ import az.edu.ada.wm2.lab6.model.mapper.ProductMapper;
 import az.edu.ada.wm2.lab6.repository.CategoryRepository;
 import az.edu.ada.wm2.lab6.repository.ProductRepository;
 
+import az.edu.ada.wm2.lab6.service.CategoryServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -92,7 +94,7 @@ class CategoryServiceImplTest {
         Category category = new Category();
 
         Product product = new Product();
-        category.setProducts(List.of(product));
+        category.setProducts(Set.of(product));
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
         when(productMapper.toResponseDto(product)).thenReturn(new ProductResponseDto());
